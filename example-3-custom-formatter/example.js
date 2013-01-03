@@ -9,7 +9,7 @@ $().ready(function () {
         }
     $('#imageGrid').imageGrid({
         items: items,
-        columns: 3,
+        columns: 4,
         rows: 2,
         repeatItemsToFillLastPage: true,
         cellEvents: [
