@@ -1,0 +1,15 @@
+﻿.image-grid-cell-hover {
+    background-color: white;
+    border: 2px solid red;
+}
+.image-grid-cell-hover > * {
+    float: left;   
+}
+.pager-page {
+    border: 1px solid green;
+    padding: 1px 2px;
+    margin-right: 5px;
+}
+.pager-page-selected {
+    background-color: yellow;
+}
