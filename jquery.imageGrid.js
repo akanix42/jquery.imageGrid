@@ -18,22 +18,22 @@
                 if (!grid)
                     return;
                 if (arg1 == 'page') {
-                    if (!arg2) {
+                    if (arg2 === undefined) {
                         returnValue = grid.page;
                         return false;
                     } else if (isNaN(parseInt(arg2))) {
                         return false;
                     } else {
-                        renderPage(parseInt(arg2), $grid, grid);
+                        grid.renderPage(parseInt(arg2));
                     }
                 }
                 else if (arg1 == 'nextPage') {
-                        renderPage(grid.page + 1, $grid, grid);
-                        return false;
+                    grid.renderPage(grid.page + 1);
+                    return false;
                 }
                 else if (arg1 == 'prevPage') {
-                        renderPage(grid.page - 1, $grid, grid);
-                        return false;
+                    grid.renderPage(grid.page - 1);
+                    return false;
                 }
             });
             return returnValue;
@@ -53,16 +53,8 @@
                 if ($grid.data('image-grid'))
                     // Grid already exists - return.
                     return;
-                var grid = {
-                    page: 0
-                };
-                grid.getPageCount = function() {
-                    return getPageCount(grid);
-                };
-                grid.options = options;
-                grid.id = getNextId();
-                
-                renderPage(0, $grid, grid);
+
+                var grid = new Grid($grid);
             });
 
         } else {
@@ -72,56 +64,83 @@
             return '<img class="image-grid-cell" height="' + grid.options.cellHeight + '" width="' + grid.options.cellWidth + '" src="' + item + '" alt="">';
         }
 
-        function Grid($grid, options) {
-            var grid = {
-                id: getNextId(),
-                options: options,
-                page: 0,
-                
-                getPageCount: getPageCount
-            };
-            $grid.data('image-grid', grid);
-
-            function getPageCount() {
-                return Math.ceil(grid.options.items.length / (grid.options.rows * grid.options.columns));
-            }
-
-            return grid;
-        }
         function getNextId() {
             if (!window._nextImageGridId)
                 window._nextImageGrid = 0;
             return window._nextImageGrid++;
         }
 
-        //function getPageCount(grid) {
-        //    return Math.ceil(grid.options.items.length / (grid.options.rows * grid.options.columns));
-        //}
-        function renderPage(page, $grid, grid) {
-            if (page < 0 )//|| page >= getPageCount(grid))
-                return;
-            
-            var options = grid.options;
-            var row = 0, col = 0, $row;
-            var numberOfItemsToRender = options.rows * options.columns;
-            var firstItemIndex = page * numberOfItemsToRender;
-            if (firstItemIndex >= options.items.length)
-                return false;
-            $grid.empty();
-            var lastItemIndex = firstItemIndex + numberOfItemsToRender;
-            var itemsToRender = options.items.slice(firstItemIndex, lastItemIndex);
-            if (options.repeatItemsToFillLastPage && lastItemIndex >= options.items.length)
-                for (var i = 0; i < numberOfItemsToRender - (options.items.length - firstItemIndex) ; i++)
-                    itemsToRender.push(options.items[i]);
-            for (var i = 0; i < itemsToRender.length; i++) {
-                if (i % options.columns == 0)
-                    $row = $('<div class="image-grid-row" id="ig_imageGrid_row' + grid.id + '"></div>')
-                        .appendTo($grid);
-                var item = itemsToRender[i];
-                $(options.formatter(item, grid)).appendTo($row).data('image-grid-item', item);
+        function Grid($grid) {
+            var grid = {
+                $grid: $grid,
+                id: getNextId(),
+                options: options,
+                page: 0,
 
+                // functions
+                createPager: createPager,
+                getPageCount: getPageCount,
+                renderPage: renderPage
+            };
+            $grid.data('image-grid', grid);
+            grid.renderPage(grid.page);
+            createPager();
+
+            function createPager() {
+                if ($.isPlainObject(grid.options.pager)) {
+                    $(grid.options.pager.selector).pager({
+                        pages: grid.getPageCount(),
+                        onUpdated: function ($pager, pager) {
+                            grid.renderPage(pager.page);
+                        }
+                    });
+                }
             }
-            grid.page = page;
+            
+            function getPageCount() {
+                return Math.ceil(grid.options.items.length / (grid.options.rows * grid.options.columns));
+            }
+
+            function renderPage(page) {
+                if (page < 0)
+                    return;
+
+                var options = grid.options;
+                var row = 0, col = 0, $row;
+                var numberOfItemsToRender = options.rows * options.columns;
+                var firstItemIndex = page * numberOfItemsToRender;
+                if (firstItemIndex >= options.items.length)
+                    return false;
+                $grid.empty();
+                var lastItemIndex = firstItemIndex + numberOfItemsToRender;
+                var itemsToRender = options.items.slice(firstItemIndex, lastItemIndex);
+                if (options.repeatItemsToFillLastPage && lastItemIndex >= options.items.length)
+                    for (var i = 0; i < numberOfItemsToRender - (options.items.length - firstItemIndex) ; i++)
+                        itemsToRender.push(options.items[i]);
+                for (var i = 0; i < itemsToRender.length; i++) {
+                    if (i % options.columns == 0)
+                        $row = $('<div class="image-grid-row" id="ig_imageGrid_row' + grid.id + '"></div>')
+                            .appendTo($grid);
+                    var item = itemsToRender[i];
+                    var $cell = $(options.formatter(item, grid));
+                    if ($.isArray(options.cellEvents)) {
+                        $.each(options.cellEvents, function (i, eventOptions) {
+                            $cell.bind(eventOptions.event, function (e) {
+                                var $cell = $(this);
+                                var item = $cell.data('image-grid-item');
+                                eventOptions.callback(grid, item, $cell, eventOptions.options);
+                            });
+                        });
+                    }
+                    $cell
+                        .appendTo($row)
+                        .data('image-grid-item', item);
+
+                }
+                grid.page = page;
+            }
+
+            return grid;
         }
     };
 })(jQuery);

@@ -35,7 +35,6 @@
             var options = $.extend({}, defaultOptions, arg1);
 
             return this.each(function () {
-
                 var $pager = $(this);
                 if ($pager.data('pager'))
                     // Grid already exists - return.
