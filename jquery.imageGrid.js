@@ -88,12 +88,13 @@
 
             function createPager() {
                 if ($.isPlainObject(grid.options.pager)) {
-                    $(grid.options.pager.selector).pager({
+                    $(grid.options.pager.selector).pager($.extend({},
+                        grid.options.pager, {
                         pages: grid.getPageCount(),
                         onUpdated: function ($pager, pager) {
                             grid.renderPage(pager.page);
                         }
-                    });
+                    }));
                 }
             }
             
@@ -119,7 +120,7 @@
                         itemsToRender.push(options.items[i]);
                 for (var i = 0; i < itemsToRender.length; i++) {
                     if (i % options.columns == 0)
-                        $row = $('<div class="image-grid-row" id="ig_imageGrid_row' + grid.id + '"></div>')
+                        $row = $('<div class="image-grid-row" id="ig_imageGrid' + grid.id + '_row' + row++ + '"></div>')
                             .appendTo($grid);
                     var item = itemsToRender[i];
                     var $cell = $(options.formatter(item, grid));
