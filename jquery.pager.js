@@ -23,7 +23,7 @@
                         return false;
                     } else {
                         pager.page = parseInt(arg2);
-                        page.update();
+                        pager.update();
                     }
                 }
                 
@@ -51,7 +51,7 @@
             var $html = $('<span class="pager-page" data-page="' + page + '">' + (page + 1) + '</span>');
             $html.click(function() {
                 pager.page = parseInt($html.data('page'));
-                page.update();
+                pager.update();
             });
             if (pager.page == page)
                 $html.addClass('pager-page-selected');

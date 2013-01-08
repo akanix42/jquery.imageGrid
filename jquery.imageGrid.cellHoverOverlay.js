@@ -26,7 +26,7 @@
             $hoverCell.css('left', position.left - ($cell.width() * (columnsToSpan-1)) + 'px');
         else
             $hoverCell.css('left', position.left + 'px');
-        $(document).on('mouseleave', $grid[0].id + ' .image-grid-cell-hover', function() { $hoverCell.remove(); });
+        $(document).on('mouseleave', grid.$grid[0].id + ' .image-grid-cell-hover', function() { $hoverCell.remove(); });
         $hoverCell
             .appendTo($('#imageGrid'))
             .mouseleave(function () {
