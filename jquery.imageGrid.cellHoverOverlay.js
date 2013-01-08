@@ -13,6 +13,8 @@
         var cellsAfter = $cell.nextAll().length;
         var positionFromRight = cellsAfter < columnsToSpan - 1;
 
+        // Remove any old hover-cells that got left behind
+        grid.$grid.find('.image-grid-cell-hover').remove();
         var $hoverCell = $(options.formatter(grid, item, $cell, options, positionFromRight));
 
         $hoverCell
@@ -24,11 +26,12 @@
             $hoverCell.css('left', position.left - ($cell.width() * (columnsToSpan-1)) + 'px');
         else
             $hoverCell.css('left', position.left + 'px');
+        $(document).on('mouseleave', $grid[0].id + ' .image-grid-cell-hover', function() { $hoverCell.remove(); });
         $hoverCell
+            .appendTo($('#imageGrid'))
             .mouseleave(function () {
                 $hoverCell.remove();
-            }).appendTo($('#imageGrid'))
-            ;
+            });
 
         function defaultCellFormatter(grid, item, $cell, options, positionFromRight) {
             var $html = $('<div class="image-grid-cell-hover">' +
