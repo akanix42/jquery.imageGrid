@@ -22,7 +22,17 @@ $().ready(function () {
             return '<img class="image-grid-cell" height="' + grid.options.cellHeight + '" width="' + grid.options.cellWidth + '" src="' + item.src + '" alt="">';
         },
         pager: {
-            selector: '.pager'
+            selector: '.pager',
+            formatter: function (page, pager) {
+                var $html = $('<span class="pager-page" data-page="' + page + '"></span>');
+                $html.click(function () {
+                    pager.page = parseInt($html.data('page'));
+                    pager.update();
+                });
+                if (pager.page == page)
+                    $html.addClass('pager-page-selected');
+                return $html;
+            }
         }
     });
 });
