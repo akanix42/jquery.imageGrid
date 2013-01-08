@@ -1,6 +1,6 @@
-﻿Author: Nathan Reid
-License: Creative Commons Attribution 3.0 United States
-Description:
+﻿Author: Nathan Reid  
+License: Creative Commons Attribution 3.0 United States  
+Description:  
 The jQuery Image Grid provides the user with a simple way of creating a grid of images (or other content) from an array.
 The user specifies the number of rows and columns per page as well as the width and height of a cell; the plugin handles the rest.
 The cell formatting can easily be overridden for custom content.
