@@ -16,3 +16,7 @@
 .pager-page-selected {
     background-color: yellow;
 }
+
+.imageGrid {
+    position: relative;
+}
