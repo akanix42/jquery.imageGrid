@@ -8,7 +8,8 @@
             columns: 1,
             cellHeight: 100,
             cellWidth: 100,
-            formatter: defaultCellFormatter
+            formatter: defaultCellFormatter,
+            loopPages: true
         };
         if ($.type(arg1) == 'string') {
             var returnValue = this;
@@ -29,14 +30,11 @@
                 }
                 else if (arg1 == 'nextPage') {
                     grid.renderPage(grid.page + 1);
-                    if (grid.pager)
-                        grid.pager.update();
                     return false;
                 }
                 else if (arg1 == 'prevPage') {
                     grid.renderPage(grid.page - 1);
-                    if (grid.pager)
-                        grid.pager.update();
+
                     return false;
                 }
             });
@@ -94,29 +92,42 @@
                 if ($.isPlainObject(grid.options.pager)) {
                     $(grid.options.pager.selector).pager($.extend({},
                         grid.options.pager, {
-                        pages: grid.getPageCount(),
-                        onUpdated: function ($pager, pager) {
-                            grid.renderPage(pager.page);
-                        }
+                            pages: grid.getPageCount(),
+                            onUpdated: function ($pager, pager) {
+                                grid.renderPage(pager.page);
+                            }
                         }));
                     grid.pager = $(grid.options.pager.selector).data('pager');
                 }
             }
-            
+
             function getPageCount() {
                 return Math.ceil(grid.options.items.length / (grid.options.rows * grid.options.columns));
             }
 
             function renderPage(page) {
-                if (page < 0)
-                    return;
-
                 var options = grid.options;
+                if (page < 0) {
+                    if (options.loopPages)
+                        page = getPageCount() - 1;
+                    else
+                        return false;
+                }
+                else if (page == getPageCount()) {
+                    if (options.loopPages)
+                        page = 0;
+                    else
+                        return false;
+                }
                 var row = 0, col = 0, $row;
                 var numberOfItemsToRender = options.rows * options.columns;
                 var firstItemIndex = page * numberOfItemsToRender;
-                if (firstItemIndex >= options.items.length)
-                    return false;
+                if (firstItemIndex >= options.items.length) {
+                    if (loopPages)
+                        page = 0;
+                    else
+                        return false;
+                }
                 $grid.empty();
                 var lastItemIndex = firstItemIndex + numberOfItemsToRender;
                 var itemsToRender = options.items.slice(firstItemIndex, lastItemIndex);
@@ -144,6 +155,8 @@
 
                 }
                 grid.page = page;
+                if (grid.pager)
+                    grid.pager.goToPage(grid.page, true);
             }
 
             return grid;

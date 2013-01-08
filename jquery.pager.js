@@ -6,7 +6,7 @@
             pages: 1,
             page: 0,
             formatter: defaultFormatter
-            
+
         };
         if ($.type(arg1) == 'string') {
             var returnValue = this;
@@ -16,7 +16,7 @@
                 if (!pager)
                     return;
                 if (arg1 == 'page') {
-                    if (!arg2) {
+                    if (arg2 === undefined) {
                         returnValue = pager.page;
                         return false;
                     } else if (isNaN(parseInt(arg2))) {
@@ -26,7 +26,7 @@
                         pager.update();
                     }
                 }
-                
+
             });
             return returnValue;
         } else if ($.isArray(arg1) && !arg2 && !arg3) {
@@ -49,7 +49,7 @@
 
         function defaultFormatter(page, pager) {
             var $html = $('<span class="pager-page" data-page="' + page + '">' + (page + 1) + '</span>');
-            $html.click(function() {
+            $html.click(function () {
                 pager.page = parseInt($html.data('page'));
                 pager.update();
             });
@@ -63,8 +63,9 @@
                 $pager: $pager,
                 page: options.page,
                 options: options,
-                
+
                 // methods
+                goToPage: goToPage,
                 render: render,
                 update: update
             };
@@ -72,19 +73,25 @@
             render();
 
             return pager;
+
+            function goToPage(page, skipOnUpdated) {
+                pager.page = page;
+                update(skipOnUpdated);
+            }
+            
             function render() {
                 for (var i = 0; i < pager.options.pages; i++) {
                     $pager.append(pager.options.formatter(i, pager));
                 }
             }
-            function update() {
+            function update(skipOnUpdated) {
                 $pager.find('.pager-page-selected').removeClass('pager-page-selected');
                 $pager.find('[data-page="' + pager.page + '"]').addClass('pager-page-selected');
-                if (pager.options.onUpdated)
+                if (!skipOnUpdated && pager.options.onUpdated)
                     pager.options.onUpdated($pager, pager);
             }
 
         }
-        
+
     };
 })(jQuery);
