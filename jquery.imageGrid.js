@@ -29,10 +29,14 @@
                 }
                 else if (arg1 == 'nextPage') {
                     grid.renderPage(grid.page + 1);
+                    if (grid.pager)
+                        grid.pager.update();
                     return false;
                 }
                 else if (arg1 == 'prevPage') {
                     grid.renderPage(grid.page - 1);
+                    if (grid.pager)
+                        grid.pager.update();
                     return false;
                 }
             });
@@ -94,7 +98,8 @@
                         onUpdated: function ($pager, pager) {
                             grid.renderPage(pager.page);
                         }
-                    }));
+                        }));
+                    grid.pager = $(grid.options.pager.selector).data('pager');
                 }
             }
             
