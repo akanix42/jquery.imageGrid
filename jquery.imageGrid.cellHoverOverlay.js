@@ -9,7 +9,7 @@
         };
         options = $.extend({}, defaultOptions, options);
         var columnsToSpan = options.columnsToSpan;
-        var position = $cell.offset();
+        var position = $cell.position();
         var cellsAfter = $cell.nextAll().length;
         var positionFromRight = cellsAfter < columnsToSpan - 1;
 
@@ -25,10 +25,10 @@
         else
             $hoverCell.css('left', position.left + 'px');
         $hoverCell
-            .appendTo($('#imageGrid'))
             .mouseleave(function () {
                 $hoverCell.remove();
-            });
+            }).appendTo($('#imageGrid'))
+            ;
 
         function defaultCellFormatter(grid, item, $cell, options, positionFromRight) {
             var $html = $('<div class="image-grid-cell-hover">' +
