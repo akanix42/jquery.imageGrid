@@ -7,7 +7,7 @@ The cell formatting can easily be overridden for custom content.
 The plugin includes paging (through the use of the included jquery.pager plugin) and allows for easy addition of events such as hover.  
   
 Help:  
-Check out [the wiki](/nathantreid/jquery.imageGrid/wiki).  
+Check out [the wiki](https://github.com/nathantreid/jquery.imageGrid/wiki).  
 There are 3 examples included - check them out. They will help you understand the plugin's features.  
   
 Installation:   
